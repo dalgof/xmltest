@@ -1,0 +1,4 @@
+﻿  xmltest.cpp
+C:\Users\布施大悟\Desktop\xml_test\xmltest\xmltest.cpp(37,10): warning C4101: 'tagelt': ローカル変数は 1 度も使われていません。
+  AssemblyInfo.obj : MSIL モジュールが見つかりました。MSIL ではインクリメンタル リンクは無効化されています。フル リンクを行います
+  xmltest.vcxproj -> C:\Users\布施大悟\Desktop\xml_test\xmltest\Debug\xmltest.exe
