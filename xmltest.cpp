@@ -22,9 +22,20 @@ void main()
 	XmlDocument^ upddoc = gcnew XmlDocument();
 	upddoc->Load("..\\upd.xml");
 
+	XmlElement^ root = orgdoc->DocumentElement;
+
 
 
 	XmlTextReader^ updreader = gcnew XmlTextReader("..\\upd.xml");
+
+	XmlReaderSettings^ settings = gcnew XmlReaderSettings();
+	settings->IgnoreWhitespace = true;
+	settings->IgnoreComments = true;
+
+	StreamReader^ updsr = gcnew StreamReader("..\\upd.xml");
+
+	XmlReader^ UpdReader;
+	UpdReader = UpdReader->Create(updsr, settings);
 
 
 	Generic::List<String^>^ EltId = gcnew Generic::List<String^>();
@@ -38,9 +49,13 @@ void main()
 	String^ eltset;
 	int idxcount = 0;
 
+	//
+	Generic::List<String^>^ eltlist = gcnew Generic::List<String^>();
+	String^ updxpath;
 
 
-	while (updreader->Read()) {
+	while (UpdReader->Read()) {
+
 
 		atrList->Clear();
 		atrNameList->Clear();
@@ -48,68 +63,54 @@ void main()
 		eltset = "";
 		prteltnameList->Clear();
 		idxcount = 0;
-
-		switch (updreader->NodeType) {
-
-		case  XmlNodeType::Element:
-			String^ currentelt;
-			currentelt = updreader->Name;
+		updxpath = "";
 
 
-			//属性チェック　属性なし
-			if (!updreader->HasAttributes) {
-				sw->WriteLine("タグ：{0}", currentelt);
-				sw->Flush();
-			}
-			//属性あり
-			else {
-				while (updreader->MoveToNextAttribute())
-				{
+		switch (UpdReader->NodeType) {
+		case XmlNodeType::Element:
+		{
 
+			//XmlNode^ node = upddoc->ReadNode(UpdReader);
 
+			upddoc->FirstChild;
 
-					atrNameList->Add(updreader->Name);
-					atrValueList->Add(updreader->Value);
-					sw->WriteLine("MoveToNextAttributeしたよ。");
-					sw->Flush();
+		}
+		case XmlNodeType::Text:
+		{
+			String^ currentnood;
+			//現在位置のテキストがあるノードの取得できる-->
+			UpdReader->ReadInnerXml();
+			currentnood = UpdReader->Name;
 
-					atrList->Add(elttmp->Format("[@{0}='{1}']", atrNameList[idxcount], atrValueList[idxcount]));
-
-					//tagelt= tagelt->Format("{0}{1}", eltname, atrList[idxcount]);
-					//sw->WriteLine(tagelt);
-					//sw->Flush();
-
-					eltset += atrList[idxcount];
-					idxcount++;
+			//<--
+		}
 
 
 
-				};
 
 
-				//for (int i = 0; i < prteltnameList->Count; i++) {
-				//	sw->WriteLine("親：{0}", prteltnameList[i]);
-
-				//}
-				XmlNodeList^ list = upddoc->GetElementsByTagName(currentelt);
-				for each (XmlNode ^ node in list) {
-					String^ tmp = node->ParentNode->Name;
-					sw->WriteLine("親：{0}", tmp);
-					sw->Flush();
-					//XmlNodeList^ grandprt = upddoc->GetElementsByTagName(node->ParentNode->Name);
-					XmlNode^ tmp2=upddoc->GetElementById(tmp);
-
-					sw->WriteLine("test:{0}", tmp2->ParentNode);
-					sw->Flush();
-
-				}
 
 
-				sw->WriteLine("属性：{0}", eltset);
-				sw->WriteLine("タグ・属性:{0}{1}", currentelt, eltset);
-				sw->Flush();
+	//		for (int i = 0; i < eltlist->Count; i++) {
+	//			updxpath = String::Join("/", eltlist);
+	//		}
+	//		updxpath = "//" + updxpath;
 
-			};
+	//		XmlNode^ book;
+	//		try{
+	//		book = root->SelectSingleNode(updxpath);
+	//		if (book) {
+	//			if (book->InnerText != updreader->Value) {
+	//				sw->WriteLine(book->InnerText);
+	//				sw->WriteLine(updreader->Value);
+	//				sw->Flush();
+	//			}
+	//		}
+	//		}
+	//		catch (...) {
+	//			sw->WriteLine("例外");
+	//			sw->Flush();
+	//		}
 
 		}
 	};
